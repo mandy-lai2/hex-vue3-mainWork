@@ -110,12 +110,14 @@ const app = {
         .then((res) => {
           alert(res.data.message);
           this.getProducts();
+          productModal.hide();
         })
         .catch((error) => {
           alert(error.data.message);
+
         });
 
-      productModal.hide();
+      
     },
 
     addImage() {
