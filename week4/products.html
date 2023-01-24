@@ -80,8 +80,8 @@
             <pagination :pages="pagination" @emit-pages="getProducts"></pagination>
           </div>
 
-          <modal-product :temp-product="tempProduct" @get-products="getProducts"></modal-product>
-          <del-product :temp-product="tempProduct" @get-products="getProducts"></del-product>
+          <modal-product :temp-product="tempProduct" @get-products="getProducts" @close-modal="closeModal"></modal-product>
+          <del-product :temp-product="tempProduct" @get-products="getProducts" @close-modal="closeModal"></del-product>
           
         </div>
       </div>
@@ -220,6 +220,7 @@
                     >
                     <input
                       type="number"
+                      min=0
                       class="form-control"
                       id="inputOriginPrice"
                       placeholder="請輸入原價"
@@ -232,6 +233,7 @@
                     >
                     <input
                       type="number"
+                      min=0
                       class="form-control"
                       id="inputPrice"
                       placeholder="請輸入售價"
