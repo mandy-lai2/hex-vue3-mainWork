@@ -26,6 +26,7 @@ const app = createApp({
         message:''
       },
       isOpen:true,
+      isButton:false
     };
   },
   methods: {
@@ -35,27 +36,31 @@ const app = createApp({
         .then((res) => {
           this.products = res.data.products;
           // console.log('全部產品:', this.products);
+          this.loader.hide();
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     getProduct(id) {
       this.loadingId = id;
+      this.isButton=true;
       axios
         .get(`${apiUrl}/api/${apiPath}/product/${id}`)
         .then((res) => {
           this.tempProduct = res.data.product;
-          console.log('單一產品:', this.tempProduct);
+          // console.log('單一產品:', this.tempProduct);
           this.$refs.productModal.openModal();
           this.loadingId = '';
+          this.isButton=false;
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     addCart(product_id, qty = 1) {
       this.loadingId = product_id;
+      this.isButton=true;
       const data = {
         product_id,
         qty,
@@ -66,9 +71,10 @@ const app = createApp({
           // alert(res.data.message);
           this.getCart();
           this.loadingId = '';
+          
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     getCart() {
@@ -82,9 +88,10 @@ const app = createApp({
           }else{
             this.isOpen=true;
           }
+          this.isButton=false;
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     updateCart(id, product_id, qty) {
@@ -101,11 +108,12 @@ const app = createApp({
           this.getCart();
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     delCart(id) {
       this.loadingId = id;
+      this.isButton=true;
       axios
         .delete(`${apiUrl}/api/${apiPath}/cart/${id}`)
         .then((res) => {
@@ -114,11 +122,12 @@ const app = createApp({
           this.loadingId = '';
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     delAllCarts() {
       this.loader=this.$loading.show();
+      
       axios
         .delete(`${apiUrl}/api/${apiPath}/carts`)
         .then((res) => {
@@ -127,24 +136,27 @@ const app = createApp({
           this.getCart();
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          alert(err.response.data.message);
         });
     },
     isPhone(value) {
       const phoneNumber = /^(09)[0-9]{8}$/
-      return phoneNumber.test(value) ? true : '需要正確的電話號碼'
+      return phoneNumber.test(value) ? true : '須為正確的手機號碼格式'
     },
     onSubmit(){
-      console.log(this.user);
+      // console.log(this.user);
       this.$refs.form.resetForm();
       this.delAllCarts();
+      alert('成功送出')
     }
   },
   mounted() {
     this.getProducts();
     this.getCart();
+    this.loader=this.$loading.show();
   },
 });
+
 app.component('userProductModal', {
   props: ['product'],
   data() {
@@ -161,6 +173,7 @@ app.component('userProductModal', {
     modalAddCart() {
       this.$emit('addCart', this.product.id, this.qty);
       this.productModal.hide();
+      this.qty = 1
     },
   },
   mounted() {

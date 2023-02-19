@@ -59,11 +59,11 @@
                 </td>
                 <td>
                   <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-outline-secondary" @click="getProduct(product.id)">
+                    <button type="button" class="btn btn-outline-secondary" @click="getProduct(product.id)" :class="{disabled: isButton}">
                       <i class="fas fa-spinner fa-pulse" v-if="loadingId === product.id"></i>
                       查看更多
                     </button>
-                    <button type="button" class="btn btn-outline-danger" @click="addCart(product.id)">
+                    <button type="button" class="btn btn-outline-danger" @click="addCart(product.id)" :class="{disabled: isButton}">
                       <i class="fas fa-spinner fa-pulse"  v-if="loadingId === product.id"></i>
                       加到購物車
                     </button>
@@ -74,8 +74,9 @@
           </table>
 
           <!-- 購物車列表 -->
-          <div class="text-end">
-            <button class="btn btn-outline-danger" type="button" @click="delAllCarts">
+          <div v-if="cart.final_total">
+            <div class="text-end">
+            <button class="btn btn-outline-danger" type="button" @click="delAllCarts" :class="{disabled: isButton}">
               清空購物車
             </button>
           </div>
@@ -84,15 +85,16 @@
               <tr>
                 <th></th>
                 <th>品名</th>
-                <th style="width: 150px">數量/單位</th>
+                <th style="width: 150px">數量/單位 </th>
                 <th>單價</th>
+                <th style="width: 130px"></th>
               </tr>
             </thead>
             <tbody>
               <template v-if="cart.carts">
                 <tr v-for="item in cart.carts" :key="item.id">
                   <td>
-                    <button type="button" class="btn btn-outline-danger btn-sm" @click="delCart(item.id)">
+                    <button type="button" class="btn btn-outline-danger btn-sm" @click="delCart(item.id)" :class="{disabled: isButton}">
                       <i class="fas fa-spinner fa-pulse"  v-if="loadingId === item.id"></i>
                       x
                     </button>
@@ -110,6 +112,7 @@
                       </div>
                     </div>
                   </td>
+                  <td>{{ item.product.price }}</td>
                   <td class="text-end">
                     <small class="text-success">折扣價：</small>
                     {{item.final_total }}
@@ -119,15 +122,18 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="3" class="text-end">總計</td>
+                <td colspan="4" class="text-end">總計</td>
                 <td class="text-end">{{ cart.total }}</td>
               </tr>
               <tr>
-                <td colspan="3" class="text-end text-success">折扣價</td>
+                <td colspan="4" class="text-end text-success">折扣價</td>
                 <td class="text-end text-success">{{ cart.final_total }}</td>
               </tr>
             </tfoot>
           </table>
+          </div>
+          <div v-else>
+            <h3 class="text-success mt-4">目前購物車沒有商品喔!</h3></div>
         </div>
         
         <!-- 表單 -->
@@ -203,16 +209,18 @@
                 class="invalid-feedback"
               ></error-message>
             </div>
-
             <div class="mb-3">
               <label for="message" class="form-label">留言</label>
-              <textarea
+              <v-field
+                as="textarea"
                 id="message"
+                name="留言"
                 class="form-control"
                 cols="30"
                 rows="10"
                 v-model="user.message"
-              ></textarea>
+              ></v-field>
+              
             </div>
             <div class="text-end">
               <button type="submit" class="btn btn-danger" :class="{disabled: isOpen}">送出訂單</button>
